@@ -30,3 +30,7 @@ link '/etc/nginx/sites-enabled/default' do
   notifies :restart, 'service[nginx]'
   action :delete
 end
+
+include_recipe "nodejs"
+
+nodejs_npm 'pm2'
