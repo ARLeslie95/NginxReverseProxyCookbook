@@ -54,5 +54,41 @@ describe 'node::default' do
     it 'should install pm2 via npm' do
       expect(chef_run).to install_nodejs_npm('pm2')
     end
+    at_exit { ChefSpec::Coverage.report! }
+  end
+end
+
+describe 'nodejs::repo' do
+  context 'When all attributes are default, on Ubuntu 16.04' do
+    let(:chef_run) do
+      # for a complete list of available platforms and versions see:
+      # https://github.com/customink/fauxhai/blob/master/PLATFORMS.md
+      runner = ChefSpec::SoloRunner.new(platform: 'ubuntu', version: '16.04')
+      runner.converge(described_recipe)
+    end
+    it 'installs nodejs-apt-transport-https' do
+      expect(chef_run).to install_package('nodejs-apt-transport-https')
+    end
+    it 'creates apt-repository nodejs' do
+      expect(chef_run).to add_apt_repository('node.js').with(
+        uri: 'https://deb.nodesource.com/node_6.x',
+        keyserver: 'keyserver.ubuntu.com',
+        key: ['1655a0ab68576280']
+      )
+    end
+  end
+end
+
+describe 'nodejs::nodejs_from_package' do
+  context 'When all attributes are default, on Ubuntu 16.04' do
+    let(:chef_run) do
+      # for a complete list of available platforms and versions see:
+      # https://github.com/customink/fauxhai/blob/master/PLATFORMS.md
+      runner = ChefSpec::SoloRunner.new(platform: 'ubuntu', version: '16.04')
+      runner.converge(described_recipe)
+    end
+    it 'installs nodejs' do
+      expect(chef_run).to install_package('nodejs')
+    end
   end
 end
